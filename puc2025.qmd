@@ -1,0 +1,619 @@
+---
+pagetitle: ""
+format: 
+  revealjs: 
+    theme: style.scss
+    slide-number: true
+    multiplex: true
+    transition: fade
+    output-dir: docs
+    height: 900
+    width: 1600
+    fontcolor: "#262d36"
+    highlight-style: a11y
+    code-line-numbers: false
+editor: visual
+---
+
+##  {background-image="images/tapa2.001.jpeg" aria-label="image with presentation title and user design."}
+
+------------------------------------------------------------------------
+
+## Motivación
+
+-   Las plataformas de aprendizaje como Moodle o Blackboard de uso extendido en el sistema educativo. Generan un gran volumen de datos tanto de estudiantes como de docentes a nivel diario
+
+-   Transformar estos datos en información para la toma de decisiones es desafiante debido a la complejidad de la estructura de los datos y la dificultad de resumir el proceso de aprendizaje basado en ellos. 
+
+- Es bastante común encontrar estudios de este tipo de datos para educacion superior pero no para primaria
+
+------------------------------------------------------------------------
+
+## Motivación, Plan Ceibal
+
+::::: columns
+::: {.column width="50%"}
+
+
+![](fotoceibal.jpeg)
+
+:::
+
+::: {.column width="50%"}
+
+- Plan Ceibal creado en 2007, inspirado en el proyecto One Laptop per Child (OLPC) de MIT 2005.
+
+"Avanzar en la Sociedad de la Información y del conocimiento, desarrollando acciones tendientes a la reducción de la brecha digital"
+
+-   Posteriormente se extendió a educación secundaria (2011)
+-   Jugó un rol clave durante la pandemia (COVID-19)
+-   Página web: <https://ceibal.edu.uy>
+:::
+:::::
+------------------------------------------------------------------------
+
+
+::::: columns
+::: {.column width="50%"}
+### Fondo concursable Nacional
+
+![](logoproy.jpg){width="50%"}
+
+![](logo-fundacion-ceibal.jpg){width="50%"}
+:::
+
+::: {.column width="50%"}
+
+### Equipo UDELAR
+
+-   Ignacio Alvarez-Castro
+-   Mauro Loprete
+-   Oscar Montañés
+-   Jimena Padín
+-   Bruno Tancredi
+
+![](IESTA_FCEA_UdelaR_rgb.jpg)
+:::
+:::::
+
+------------------------------------------------------------------------
+
+## Líneas de trabajo
+
+1.  Herramientas para evaluar y monitorear el uso de las plataformas educativas en educación primaria en Uruguay. Monitor de uso implementado en una Shiny app.  
+
+<!-- app, draft version: [http://164.73.240.157:3838/App-Ceibal/](http://164.73.240.157:3838/App-Ceiba) -->
+
+2.  Identificar los factores claves en el uso de las plataformas, entender las fuentes de variabilidad y definir medidas de compromiso tanto de docentes como de estudiantes.
+
+3.  Predecir el desempeño de los estudiantes basados en los datos de uso de las plataformas.
+
+
+# Monitor de uso {.title-top-ice}
+
+
+## Datos:
+
+Dos conjuntos de datos:
+
+- Marco de alumnos y docentes para los grados 4to, 5to y 6to de
+primaria. Variables contienen información personal de cada usuario (fecha de nacimiento, sexo, departamento de residencia, etc) y relación con su ámbito de estudio (id del centro escolar, grado, clase, etc). 
+
+
+- Registros de todas las actividades realizadas por cada
+usuario de la plataforma CREA en los días que hizo uso de ella entre 2018 y 2021. Variables referidas a la actividad realizada en CREA (fecha del registro, comentarios posteados, trabajos enviados, etc), contando con un total de 56 variables.
+
+
+
+## Datos de uso 
+
+-   **DATOS**: Uso de la CREA  para educación primaria entre 2018 to 2021 de 4to a 6to.
+
+| Año |    N     | Estudiantes | Docentes |
+|:----:|:--------:|:--------:|:--------:|
+| 2018 | 1.912801 |  98.054  |   3801   |
+| 2019 | 2.652856 | 103.168  |   4474   |
+| 2020 | 7.403004 | 109.019  |   5477   |
+| 2021 | 8.607445 | 119.065  |   5299   |
+
+Para transformar los datos en información relevante para la toma de decisiones es necesario preprocesarlos y definir resumenes y visualizaciones estadísticas apropiadas.
+
+
+
+
+## Indicador de compromiso
+
+- El índice de compromiso resume información de seis variables relevantes para los estudiantes de educación primaria y permite resumir la actividad a distintos niveles de análisis (clase, grado,
+escuela, departamento) y en distintos horizontes temporales (año, mes, semana). 
+
+
+- Dicho indicador está acotado inferiormente en 0, pero no posee una cota superior.
+
+
+$$IC_{it}=\frac{\sum_{j=1}^6 log(x_{jit}+1)}{log(2)}$$
+
+donde $x_{jit}$ es el valor de la variable $j$ para el estudiante $i$ en el tiempo $t$.
+
+<!-- En términos diarios, si un usuario puede realizar una sola actividad contabilizable dentro del índice (es decir, perteneciente a las variables establecidas), entonces el índice puede aumentar por día log(1 + 1). -->
+<!-- La interpretación del valor del índice es la cantidad de días que el usuario entró y realizó al menos 1 actividad. Hemos de tener en cuenta que para los índices mensuales, por ejemplo, el valor puede superar la cantidad de días habilitados ya que el alumno en la realidad puede realizar más de una -->
+<!-- tarea diaria. Las variables consideradas en el índice de compromiso para estudiantes son: total de envíos calificables, total de subidas, total comentarios posteados, total comentarios posteados en envíos asignados, total días ingreso y total de envíos. En la Figura 7 se presenta la distribución -->
+<!-- del índice de compromiso para estudiantes según año, se puede observar una distribución similar -->
+<!-- para 2018 y 2019 con un valor promedio entorno a 15 mientras que para los años 2020 y 2021 -->
+<!-- la distribución presenta un corrimiento a la derecha con un valor promedio entorno a 35 lo cuál -->
+<!-- implica un incremento importante en el uso en los años de pandemia. -->
+
+## Monitor, ShinyApp
+
+-   Debe ser escalable
+
+-   Debe ser modularizable
+
+-   Debería ser suficientemente flexible de mantener, modificar y testear
+
+-   Debería ser reproducible
+
+-   Debería estar preparado para ser usado por muchos usuarios al mismo tiempo
+
+La aplicación fue desarrollada en base a `rhino` conectada a una base de datos con PosgreSQL.
+
+------------------------------------------------------------------------
+
+##  {#demo-share .centered data-menu-title="Demo: Share" background-video="shiny.mp4" background-size="contain" background-color="#FFFFFF"}
+
+# Modelos predictivos {.title-top-ice}
+
+## Desempeño académico
+
+**Objetivo:** Predecir el desempeño en la prueba de Inglés basado en datos de uso de plataformas.
+
+Diferentes problemas:
+
+1.  Predecir los puntos en la prueba de Inglés para cada estudiante.
+
+2.  Predecir el promedio de puntos a nivel de la clase.
+
+3.  Predecir si un estudiante de 6to grado alcanza o no el nivel A2.1 como es esperado.
+
+<!-- El flujo de trabajo se basa en `tidymodels` -->
+
+------------------------------------------------------------------------
+
+## Desempeño académico
+
+1.  Fuentes de datos:
+
+    -   Datos de desempeño: Resultados de las pruebas adaptativas de Inglés
+    -   Datos de plataforma: Datos de uso de la plataforma Little Bridge.
+    -   Datos de contexto: Datos de contexto socioeconómico y demográfico de los estudiantes.
+    
+2.  Foco:
+
+    -   Grupo objetivo: Estudiantes de 6to año (11 años).
+    -   Respuesta: Predecir si un estudiante llega al nivel esperado de Inglés  (problema de clasificación).
+
+------------------------------------------------------------------------
+
+## Datos de desempeño
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE}
+library(here)
+library(tidyverse)
+library(ggforce)
+knitr::knit_hooks$set(crop = knitr::hook_pdfcrop)
+
+dt.mes <- read_csv(here('datos_long_modelo.csv') )
+
+dt.mes_wide <- read_csv(here('datos_wide_modelo.csv'))
+
+dt.mes_wide |> 
+  mutate(xx = 'h', Level = factor(nivel, levels = c("B1","A2.2", "A2.1", "A1.2", "A1.1", "Pre_A1.1") ), Grade = Grado) |> 
+#filter(Grado == 6) |> 
+  ggplot(  ) + geom_sina(aes(x = Grade, y = puntos, colour = Level, group = Grade), size = .5)+
+  scale_color_viridis_d() + labs(x = 'Grade') + 
+  theme_bw() + 
+  theme(aspect.ratio = 1/2) + 
+  coord_flip() + labs(colour = "Level", y = 'English test points')+
+guides(color = guide_legend(override.aes = list(size = 3))) 
+
+
+#ggsave('grade.pdf')
+```
+
+<!-- 12% de los estudiantes están por debajo del nivel A1.1  -->
+
+## Contexto socioeconómico y uso de LB
+
+```{r, echo=FALSE,  message=FALSE, fig.width=16, fig.height=6}
+library(plotly)
+pp<- dt.mes |>
+  mutate( nivel.ord = reorder(nivel, -puntos, mean), Socioeconomic_context =
+case_match(Contexto_Sociocultural, 
+"Quintil 1" ~ "Quintile 1",
+"Quintil 2" ~ "Quintile 2",
+"Quintil 3" ~ "Quintile 3",
+"Quintil 4" ~ "Quintile 4",
+"Quintil 5" ~ "Quintile 5"), Grade = Grado , Month = mes) |>
+  group_by(Grade, Socioeconomic_context, Month) |>
+  summarise( correctas = mean(correctas.acu), dias=mean(dias.acu), acierto=mean(acierto),
+             Total_attemps = sum(intenta.total)) |>
+  # filter( Grado == 6) |>
+  ggplot() +
+  geom_line(aes(x = Month, y=Total_attemps, color = Socioeconomic_context ), linewidth=1, alpha=.75) +
+  facet_grid(~ Grade, scale='free_y', labeller = label_both) +
+  labs(y = 'Total attemps', x = 'Month', color = '') +
+   scale_color_brewer(palette = 'RdYlBu')+
+  scale_x_continuous(breaks = 3:12)+
+   theme_bw() 
+  
+  
+
+ggplotly(pp)
+
+# 
+# 
+# pp<- dt.mes |>
+#   mutate( nivel.ord = reorder(nivel, -puntos, mean), Socioeconomic_context =
+# case_match(Contexto_Sociocultural,
+# "Quintil 1" ~ "Quintile 1",
+# "Quintil 2" ~ "Quintile 2",
+# "Quintil 3" ~ "Quintile 3",
+# "Quintil 4" ~ "Quintile 4",
+# "Quintil 5" ~ "Quintile 5"), Grade = Grado , Month = mes) |>
+#   group_by(Grade, Socioeconomic_context, Month) |>
+#   summarise( correctas = mean(correctas.acu), dias=mean(dias.acu), acierto=mean(acierto),
+#              Total_attemps = sum(intenta.total))
+# 
+#  aux<-pp |> filter(Grade==6)
+#   pl <-ggplot(data=aux) +
+#   geom_line(aes(x = Month, y=Total_attemps, color = Socioeconomic_context ), linewidth=1, alpha=.75)+
+# labs(y = 'Total attemps', x = 'Month', color = '') +
+#    scale_color_brewer(palette = 'RdYlBu')+
+#   scale_x_continuous(breaks = 3:12)+
+#    theme_bw()
+# ggsave('attempt_6.pdf')
+
+
+```
+
+Intentos mensuales por grado y contexto socioeconómico 
+
+------------------------------------------------------------------------
+
+## Uso de LB y desempeño académico 
+
+```{r,echo=FALSE,  message=FALSE, fig.height=6, fig.width=16}
+
+pp2 <- dt.mes |>
+  mutate( nivel.ord = reorder(nivel, -puntos, mean) , Socioeconomic_context =
+case_match(Contexto_Sociocultural, 
+"Quintil 1" ~ "Quintile 1",
+"Quintil 2" ~ "Quintile 2",
+"Quintil 3" ~ "Quintile 3",
+"Quintil 4" ~ "Quintile 4",
+"Quintil 5" ~ "Quintile 5"), Grade = Grado,  Month = mes, Level= nivel.ord ) |>
+  group_by(Grade, Socioeconomic_context, Month, Level) |>
+  summarise( Correct = round(mean(correctas.acu),1), dias=mean(dias.acu), acierto=mean(acierto) ) |>
+  filter( Grade == 6) |>
+  ggplot() +
+  geom_line(aes(x = Month, y=Correct, color = Level ), linewidth=1, alpha=.75)+
+  facet_grid(Grade~Socioeconomic_context, scale='free_y') +
+  labs(color = 'Level', x='Month', y='Correct answers') +
+  scale_color_viridis_d() +
+  scale_x_continuous(breaks = 3:12) +
+  theme_bw() +
+  theme(aspect.ratio = 2, legend.position='bottom')
+
+ ggsave('LB_perf.pdf')
+ggplotly(pp2)
+
+```
+
+Respuestas mensuales correctas por contexto socioeconómico y nivel de Inglés
+
+------------------------------------------------------------------------
+
+## Problema de Clasificación
+
+Los estudiantes de 6to año se \textit{espera} que alcancen el nivel  **A2.1** level.
+
+-   Respuesta: $$Y_i =\begin{cases}
+       1  & \text{ alcanza el nivel A2.1 o mayor} \\
+       0  & \text{ otro caso }
+    \end{cases}$$
+
+-   Uso acumulado de trabajo en LB hasta Julio
+
+-   Se ajustan varios métodos supervisados
+
+-   Se incluyen efectos aleatorios en BART
+
+
+## Problema de Clasificación
+
+Preguntas de interés a responder:
+
+-  ¿Es posible estimar probabilidades de alcanzar el nivel esperado de Inglés basado en variables predictoras?
+
+- ¿Qué tan temprano se pueden identificar problemas de desempeño sin que se afecte la perfrmance predictiva del modelo.
+
+- ¿Podemos identificar centros educativos que difieran en términos de desempeño y aprender algo de ellos?
+
+- ¿Factores individuales, como el uso de la plataforma son más importantes que el contexto socioeconómico, la clase o el centro educativo en el impacto en el desempeño?
+
+
+## Datos
+
+- Muchas de las variables predictivas son variables mensuales que resumen el uso de la plataforma Little Bridge (LB) por parte de los estudiantes y acumuladas en el año. 
+
+- Estas variables abarcan desde marzo hasta noviembre, y se refieren a actividades realizadas en la plataforma (161 variables usadas en los modelos).
+
+- Ejemplo:  intentos promedios por actividades, promedio de respuestas correctas, días de uso, mínimos y máximo de puntos por activada, mensajes recividos y enviados, entre otros 
+
+
+
+## BART
+
+Bayesian Additive Regression Trees (BART) es un método no paramétrico de aprendizaje estadístico que combina árboles de regresión dentro de un enfoque Bayesiano.
+
+ E. I. G. Hugh A. Chipman, R. E. McCulloch, Bart:Bayesian additive regression trees. The Annals of Applied Statistics, vol. 4, no. 1, pp. 266–298, 2010, doi:
+10.1214/09-AOAS285.
+
+- Estos métodos presentan buen desempeño predictivo, interpretabilidad, pueden ser aplicados tanto para problemas de regresión como de clasificación y permiten modelar a su vez estructuras jerárquicas mediante la incorporación de efectos aleatorios.
+
+- A su vez BART permite cuantificar la incertidumbre a través de las distribuciones posteriores.
+
+- Existen varias extensiones para BART que permiten modelar variables de respuesta multinomiales, de supervivencia, entre otras. 
+
+
+
+## BART
+
+Los árboles de decisión forman particiones anidadas que dividen el espacio de los predictores donde en cada partición se usa un modelo simple para predecir la respuesta.
+
+\centering
+
+![](unarbol.png)
+
+-   Figura de: Hill, J., Linero, A., & Murray, J. (2020). Bayesian additive regression trees: A review and look forward. Annual Review of Statistics and Its Application, 7, 251-278.
+
+------------------------------------------------------------------------
+
+## BART 
+
+
+- Modelo general:
+
+$$y_{i} = f(x_i) + \epsilon_i$$
+donde $y_i\in R$ y $\epsilon_i\sim N(0, \sigma^2)$
+
+- Cuando la respuesta es binaria BART puede ser modificado usando un link probit:
+
+$$Pr(y_i=1/x_i)=\phi(f(x_i))$$
+
+donde $\phi()$ es la función de distribución acumulada normal.
+
+
+## BART
+
+- Los efectos de grupos se pueden incorporar en BART como un intercepto aleatorio en el grupo 
+$$y_{ig} = f(x_i) + \mu_g +\epsilon_{ig}$$
+$\mu_g\sim N(0, \sigma_{\mu}^2)$ efecto aleatorio en el grupo $g$
+
+- Para el problema analizado incorporar efecto aleatorio de escuela nos permite aislar el impacto de la escuela en el desempeño de los estudiantes.
+
+## BART 
+
+- Objetivo principal es obtener una estimación para $f()$, BART usa para ello un ensemble de árboles de decisión construídos con una estrategia de tipo boosting. 
+
+- Es decir $f()$ es modelada como una suma de árboles
+
+\begin{array}{cl}
+
+f(x_i) & = \sum_{b=1}^B g(x_i; \mu_b, T_b)  \\
+g(x_i; \mu_b, T_b)  &= \sum_{j=1}^{J_b} \mu_{bj} I(x \in T_{bj})
+\end{array}
+
+
+- Donde $T_b$ representa la estructura del árbol descrita como una secuencia de reglas de decisión que particiona el espacio de las predictoras en $\{(T_{bj})\}_{b=1}^{J_b}$ regiones.
+- $\mu_b\in R^{J_b}$ es un vector con valores $\mu_{bj}$ asociada a cada región  $T_{bj}$. 
+- En resumen, el modelo $g(x_i; \mu_b, T_b)$ particiona el espacio de las predictoras en regiones y asigna una constante de predicción $\mu_{bj}$ en cada región.
+
+
+------------------------------------------------------------------------
+
+## BART 
+
+- En el contexto Bayesiano para hacer inferencia tenemos que especificar las distribuciones previa  para cada parámetro del modelo y MCMC para aproximar la distribución posterior.
+
+Hay que especificar previas para la estructura del árbol $T_b$, nodos terminales $\mu_b$ y el desvío del ruido $\sigma$.
+
+
+- La previa para la estructura del árbol $T_b$ se fija de forma que la probabilidad de partir un nodo particular a una profundidad $d$ es proporcional a $\alpha(1+d)^{-\beta}$
+
+- Donde $\alpha \in (0,1)$ y $\beta >0$.
+
+Condicional en la estructura del árbol se definen las otras dos previas para que sean conjugadas.
+
+
+## Resultados de los efectos aleatorios
+
+Hay escuelas con efecto positivo en la mayoría de los quintiles socioeconómicos
+
+<!-- ![](raneff-quintil.png) -->
+
+```{r, fig.width=20, fig.height=5}
+library(tidymodels)
+library(readr)
+library(data.table)
+library(gridExtra)
+library(vip)
+library(doParallel)
+library(dbarts)
+
+set.seed(1780)
+
+
+cei <- fread('datos_bruno_6to.csv')
+
+cei_split <- initial_split(cei, prop = 0.80, strata = aprobado)
+cei_train <- training(cei_split) 
+cei_test <- testing(cei_split) 
+
+cei_train <- cei_train |> select(-puntos) |> mutate(id_centro = as.factor(id_centro))
+cei_test <- cei_test |> select(-puntos) |> mutate(id_centro = as.factor(id_centro))
+
+# rbartFit <- rbart_vi(aprobado ~ . - id_centro, data = cei_train, group.by = id_centro, 
+#                      #test = cei_test, group.by.test = cei_test$id_centro,
+#                      n.samples = 200, n.burn = 1000,
+#                      keepTrees = TRUE, keepCall = TRUE, keepTestFits = TRUE,
+#                      n.trees = 200,  n.chains = 4, n.thin = 1, seed = 1784)
+# 
+# 
+# random_effects_means <- rbartFit$ranef.mean
+# random_effects_sd <- unlist(lapply(1:n_distinct(cei_train$id_centro), function(x) sd(unlist(as.list(rbartFit$ranef[,,x])))))
+# 
+# random_effects <- tibble(
+#   id_centro = names(random_effects_means),
+#   mean = random_effects_means,  
+#   sd = random_effects_sd
+#   ) |> 
+#   mutate(is_significant = as.factor(if_else((mean - sd > 0), 1, if_else((mean + sd < 0),-1,0))))
+# 
+# qcen <- cei_train |> 
+#   group_by(id_centro) |> 
+#   summarise( contexto = first(contexto_sociocultural) ) |> 
+#   inner_join(random_effects)
+# 
+# write_csv(qcen, "qcen.csv")
+# random_effects$names <- names(random_effects_means)
+
+qcen<-read_csv("qcen.csv")
+
+qcen |> mutate( Socioeconomic_context=
+case_match(contexto, 
+"Quintil 1" ~ "Quintile 1",
+"Quintil 2" ~ "Quintile 2",
+"Quintil 3" ~ "Quintile 3",
+"Quintil 4" ~ "Quintile 4",
+"Quintil 5" ~ "Quintile 5"),
+is_significant=as.factor(is_significant)) |> 
+
+ggplot( aes(x = reorder(id_centro, mean), y = mean)) +
+  geom_point(aes(color = is_significant, fill = is_significant), size = 4, shape = 21) +
+  # Add error bars for standard errors
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd,  color = as.factor(is_significant)),
+                width = 0.2, alpha = 1) +
+  geom_hline(yintercept = 0) +
+  # Customize the plot appearance
+  labs( y = "Random Effect") +
+  facet_wrap(~Socioeconomic_context, ncol=5) + 
+  scale_color_manual("is_significant", breaks=c(-1,0,1),values=c("#d63031", "#636e72", "#00b894")) +
+  scale_fill_manual("is_significant", breaks=c(-1,0,1),values=c("#d63031", "#636e72", "#00b894"))+
+  theme(legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text = element_text(size = 16), 
+        axis.title = element_text(size = 18),
+        plot.caption = element_text(size = 13))
+
+ggsave('rand_eff2.pdf')
+```
+
+------------------------------------------------------------------------
+
+## Resultados del modelo predictivo para algunos estudiantes sintéticos
+
+```{r, fig.width=16, fig.height=7}
+
+
+prob_quantiles <- fread('probabilidad_por_cuantiles.csv')
+
+ pl_bart<-prob_quantiles |> mutate(Socioeconomic_context =
+case_match(contexto, 
+"Quintil 1" ~ "Quintile 1",
+"Quintil 2" ~ "Quintile 2",
+"Quintil 3" ~ "Quintile 3",
+"Quintil 4" ~ "Quintile 4",
+"Quintil 5" ~ "Quintile 5"),
+LB_use = decile) |> 
+ggplot( aes(x = Socioeconomic_context, y = prob, color = LB_use, group = LB_use)) + 
+  geom_point() + geom_line() +
+  geom_errorbar(aes(ymin = prob - desv, ymax = prob + desv),
+                width = 0.2, alpha = 0.7, linewidth = 1) +
+  labs(x = "Socioeconomic context",
+       y = "Prob. to reach A2.1",
+       color = "LB_use") +
+  theme_minimal() +
+  theme(legend.position = "top",
+        axis.text = element_text(size = 16), 
+        axis.title = element_text(size = 18),
+        legend.text = element_text(size = 17),
+        legend.title = element_text(size =18), 
+        plot.caption = element_text(size = 13, hjust = 0.5))
+
+ggplotly( pl_bart)
+```
+
+## Comentarios Finales
+
+-   Los datos de plataformas educativas pueden ser utilizados para mejorar la educación.
+
+-   Transformar datos en información relevante requiere herramientas computacionales y métodos estadísticos apropiadas.
+
+-   Presentamos la aplicación Shiny como herramienta para evaluar y monitorear el uso de la plataforma CREA entre 2018 y 2021.
+
+-   Ajustamos modelos BART para predecir el desempeño académico, (alcanzan o no el nivel A2.1).
+
+-   Los resultados de modelo pueden ser usados como una herramienta temprana para identificar estudiantes en riezgo y centros con necesidad de intervención o de los que se pueda aprender.
+
+## Otros proyectos 
+
+- Árboles y bosques de clasificación basados en proyecciones (`PPforest`, `PPtreeExt`)
+
+- Visualización estadística en altas dimensiones
+
+- Investigación reproducible, participo de la iniciativa de reproduciblidad de JASA como editora de reproducibilidad
+
+- `metasurvey`: paquete en R para el análisis de encuestas por muestreo basado en meta programación
+
+- Proyecto para predecir vulnerabilidad de las personas en base a diversas fuentes de datos y asignar eficientemente recursos de programas de prestaciones condicionadas en Uruguay.
+
+
+
+Más info en mi página web: <https://natydasilva.github.io/natydasilva/>
+
+# Gracias! {.title-top-ice}
+
+<!-- ## Presentation objetives -->
+
+<!-- In this presentation we will focused on part of the project -->
+
+<!-- -   This talk focuses on statistical tools for the evaluation and monitoring of LMS use by students and teachers. First, a web application was developed as a tool that allows monitoring the use of educational platforms in a user-friendly manner. -->
+
+<!-- -   Additionally, statistical learning methods were used to predict students' performance in tests using LMS information as predictors. Challenges such as data structure and size present many hurdles in this project. Most of these challenges are addressed using efficient computational tools at each stage of data analysis. -->
+
+<!-- ------------------------------------------------------------------------ -->
+
+<!-- ## Some tools used -->
+
+<!-- Postgres serves as the SQL engine, data.table is used for data wrangling, and shiny, plotly, and ggplot2 are employed for communication and visualization. Finally, tidymodels and dbart are utilized for predictive models. -->
+
+<!-- ------------------------------------------------------------------------ -->
+
+<!-- ## Learning Outcome -->
+
+<!-- 1.  Significance of Learning Management Systems (LMS): Highlight the importance of LMS in modern education and their role in generating large volumes of data. -->
+
+<!-- 2.  Challenges in Data Transformation and Data Analysis: Discuss the complexities involved in transforming raw data from LMS into actionable information for decision-making and educational policy formulation. Discuss the challenges posed by data structure, size, and complexity, and highlight the importance of using efficient computational tools for effective data analysis. -->
+
+<!-- 3.   -->
+
+<!--     ## Web Application Development: Discuss the development of web applications designed for systematic and standardized monitoring of educational platform usage based on rhino. -->
+
+<!-- ## Learning Outcome -->
+
+<!-- 4.  Predictive Analytics for Student Performance: Explore the application of statistical learning methods to predict student performance in standardized tests using LMS data as predictors. -->
+
+<!-- 5.  Highlight the use of specific tools and technologies such as R packages (data.table, shiny, plotly, ggplot2, tidymodels, dbart) and databases (Postgres) for data wrangling, visualization, and predictive modeling. -->
+
+<!-- 6.  Implications for Educational Policy and Practice: Explore the implications of insights derived from educational data analysis for informing decision-making, improving educational outcomes, and shaping educational policy and practice. -->
