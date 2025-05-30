@@ -1,0 +1,4 @@
+- source: user2024_presentation.qmd
+  quarto-pub:
+    - id: 0ff001bb-513f-4052-a5e0-495734734382
+      url: 'https://natydasilva.quarto.pub/user2024_presentation'
